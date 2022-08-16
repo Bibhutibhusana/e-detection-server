@@ -1,14 +1,13 @@
 package com.nic.edetection.controller;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,11 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import com.nic.edetection.iservice.IFileUploadService;
 import com.nic.edetection.model.FileInfo;
-import com.nic.edetection.model.VehicleTransactionHistory;
 import com.nic.edetection.repo.VehicleTransactionHistoryRepository;
-import com.opencsv.CSVWriter;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:4200"})
+@CrossOrigin
+//(origins = {"http://localhost:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1/")
 public class FileUploadController {
 	@Autowired  VehicleTransactionHistoryRepository vehicleTransactionHistoryRepo;
@@ -46,26 +44,53 @@ public class FileUploadController {
 	
 	@Autowired
 	  IFileUploadService storageService;
+
 	
-	 @PostMapping("/upload")
-	  public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+	 @PostMapping("/upload/{userId}")
+	  public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file,@PathVariable(value = "userId") Long userId) {
 	    String message = "";
+	    Map<String,String> msg = new HashMap<>();
 	    try {
-	      storageService.save(file);
-	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
-	      return ResponseEntity.ok(message);
-	    } catch (Exception e) {
+	      String message1 = storageService.save(file,userId);
+	     // System.out.println(message1);
+	      //message = "Uploaded the file successfully: " + file.getOriginalFilename();
+	     
+	      msg.put("message", message1);
+	      return ResponseEntity.ok(msg);
+	    }  catch (NoSuchElementException e) {
+	    	msg.put("message", "Duplicate Value Inserted");
+	    	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(msg);
+		}
+	    //	catch (ParseException e) {
+//			msg.put("message", "Unparsable Date format : dd/mm/yyyy hh:mm");
+//	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+//		}
+//		catch(FileAlreadyExistsException e) {
+//			msg.put("message", "File Already Exist");
+//	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
+//		} 
+	    
+	    catch (Exception e) {
+	    	System.out.println(e);
 	      message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+	      msg.put("message", message);
+	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(msg);
 	    }
 	  }
 	  @GetMapping("/files")
 	  public ResponseEntity<List<FileInfo>> getListFiles() {
 	    List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
 	      String filename = path.getFileName().toString();
+	      long size =0;
+	      try {
+			 size = Files.size(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	      String url = MvcUriComponentsBuilder
 	          .fromMethodName(FileUploadController.class, "getFile", path.getFileName().toString()).build().toString();
-	      return new FileInfo(filename, url);
+	      return new FileInfo(filename, url,size);
 	    }).collect(Collectors.toList());
 	    return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
 	  }

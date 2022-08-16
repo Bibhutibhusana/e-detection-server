@@ -17,48 +17,78 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nic.edetection.dto.VehicleDetailsDto;
 import com.nic.edetection.exception.ResourceNotFoundException;
 import com.nic.edetection.iservice.IVehicleDetailsService;
-import com.nic.edetection.model.VehicleDetails;
+import com.nic.edetection.livedb.service.VehicleDetailsFromLiveDbService;
 
 @RestController
-@CrossOrigin(origins={"http://localhost:4200","http://192.168.137.77:4200","http://192.168.43.199:4200","https://bibhutibhusana.github.io"})
+@CrossOrigin
+//(origins={"http://localhost:4200","http://192.168.137.77:4200","http://192.168.43.199:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1")
 public class VehicleDetailsController {
 @Autowired IVehicleDetailsService vehicleDetailsService;
+@Autowired VehicleDetailsFromLiveDbService vd;
 	
 	@GetMapping("/vehicle-details")
-	public List<VehicleDetails> getVehicleDetailsList() throws SQLException{
+	public List<VehicleDetailsDto> getVehicleDetailsList() throws SQLException{
 		return vehicleDetailsService.getVehicleDetails();
 	}
-	@PostMapping("/vehicle-details-by-date")
-	public List<VehicleDetails> getVehicleDetailsByDate(@RequestBody String date) throws ParseException{
-		return vehicleDetailsService.getVehicleDetailsListByDate(date);
+	@SuppressWarnings("finally")
+	@PostMapping("/vehicle-details-by-date/{userId}")
+	public List<VehicleDetailsDto> getVehicleDetailsByDate(@RequestBody String date, @PathVariable(value="userId")Long userId) throws ParseException{
+//		System.out.println("method ");
+		try {
+			vd.getVehicleDetails(userId,date);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			return vehicleDetailsService.getVehicleDetailsListByDate(date);
+		}
+		
+	}
+	
+	@PostMapping("/vehicle-details-by-date-class-comparision")
+	public List<VehicleDetailsDto> getVehicleDetailsByDateAndClassComparision(@RequestBody String date) throws ParseException{
+		return vehicleDetailsService.getInvalidVehicleByDateAndClassComparision(date);
 	}
 	
 	@GetMapping("/vehicle-details/{id}")
-	public ResponseEntity<VehicleDetails> getVehicleDetailsById(@Valid @PathVariable(name="id")Long id) throws ResourceNotFoundException{
+	public ResponseEntity<VehicleDetailsDto> getVehicleDetailsById(@Valid @PathVariable(name="id")Long id) throws ResourceNotFoundException{
 		return vehicleDetailsService.getVehicleDetailsById(id);
 	}
 	
 	@GetMapping("/vehicle-detail/getByVehicleNo")
-	public List<VehicleDetails> getVehicleDetailsListByVehicleNo( ) throws SQLException{
+	public List<VehicleDetailsDto> getVehicleDetailsListByVehicleNo( ) throws SQLException{
 		return vehicleDetailsService.getVehicleDetails();
 		//return vehicleDetailsService.getVehicleDetailsByVehicleNo(vehicleNo);
 	}
 	 
 	@GetMapping("/invalid-vehicle-details")
-	public List<VehicleDetails> getInvalidVehicleDetails(){
+	public List<VehicleDetailsDto> getInvalidVehicleDetails(){
 		return vehicleDetailsService.getInvalidVehicleDetails();
 	}
 	
 	@GetMapping("/invalid-vehicle-details-by-type/{offenseType}")
-	public List<VehicleDetails> getInvalidVehicleDetailsByType(@Valid @PathVariable(value="offenseType") String offenseType){
+	public List<VehicleDetailsDto> getInvalidVehicleDetailsByType(@Valid @PathVariable(value="offenseType") String offenseType){
 		return vehicleDetailsService.getInvalidVehicleByType(offenseType); 
 	}
 	@PostMapping("/vehicle-details-by-date-type")
-	private List<VehicleDetails> getInvalidVehicleDetailsByDateAndType(@Valid @RequestBody Map<String,String> obj) throws ParseException{
+	private List<VehicleDetailsDto> getInvalidVehicleDetailsByDateAndType(@Valid @RequestBody Map<String,String> obj) throws ParseException{
 		return vehicleDetailsService.getInvalidVehicleListByDateAndType(obj.get("offenseType"),obj.get("tDate"));
+	}
+	
+	@PostMapping("/vehicleDetailsUpdateById")
+	private VehicleDetailsDto updateVehicleDetailsByDate(@Valid @RequestBody Map<String,Long> obj) throws ResourceNotFoundException {
+		//System.out.println("Method called");
+		return vehicleDetailsService.updateVehicleDetails(obj.get("id"),obj.get("userid"));
+	}
+	
+	@GetMapping("/vehicle-details-count")
+	private long getInvalidVehicleDetailsCountI() {
+		return vehicleDetailsService.getInvalidVehiclesNumber();
 	}
 	
 

@@ -7,88 +7,70 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties
 @Entity
-@Table(name="user_login")
-public class UserLogin extends BaseEntity{
+@Table(name = "ed_user_login")
+public class UserLogin extends BaseEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO)
-	@Column(name="id")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="username")
+
+	@Column(name = "username", nullable = false, unique = true)
 	private String userName;
-	
-	@Column(name="password")
+
+	@Column(name = "password")
 	private String password;
-	
-	@Column(name="full_name")
+
+	@Column(name = "full_name")
 	private String fullName;
-	
-	@Column(name="role")
+
+	@Column(name = "role")
 	private String role;
-	
-	@Column(name="email")
+
+	@Column(name = "email")
 	private String email;
-	
-	@Column(name= "phone")
+
+	@Column(name = "phone")
 	private String phone;
 
-	public Long getId() {
-		return id;
-	}
+	@Column(name = "active")
+	private Boolean active;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@Column(name = "toll_name")
+	private String tollName;
 
-	public String getUserName() {
-		return userName;
-	}
+	@Column(name = "piu")
+	private String piu;
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+	@Column(name = "off_cd")
+	private String offCd;
 
-	public String getPassword() {
-		return password;
-	}
+	@Column(name = "st_cd")
+	private String stateCd;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+	private String orgPass;
 	
-	
+	@Column(name="lat")
+	private String latitude;
+	@Column(name="long")
+	private String longitude;
+	@Column(name="district_id")
+	private Integer districtId;
+
 
 }

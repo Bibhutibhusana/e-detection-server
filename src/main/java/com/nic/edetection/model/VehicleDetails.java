@@ -9,9 +9,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Data;
+@Data
 @Entity
-@Table(name="vehicle_details")
+@Table(name="ed_vehicle_details")
 public class VehicleDetails extends BaseEntity{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy =GenerationType.AUTO)
 	@Column(name ="id")
@@ -40,82 +47,65 @@ public class VehicleDetails extends BaseEntity{
 	
 	@Column(name="nonusestat")
 	private String nonUseStat; 
-
+	
+	@Column(name="is_challan_issued")
+	private Boolean isChallanIssued;
+	
+	@Column(name="uniqueid",unique=true)
+	private String uniqueId;
+	
+	@Column(name="puc_upto")
+	private Date pucUpto;
+	
+	@Column(name="permit_upto")
+	private Date permitUpto;
+	
+	@Column(name="owner_name")
+	private String ownerName;
+	
+	@Column(name="f_name")
+	private String fName;
+	
+	@Column(name ="c_add1")
+	private String cAdd1;
+	
+	@Column(name="c_add2")
+	private String cAdd2;
+	
+	@Column(name="c_add3")
+	private String cAdd3;
+	
+	@Column(name="c_district")
+	private Integer cDistrict;
+	
+	@Column(name="c_state")
+	private String cState;
+	
+	@Column(name="c_pincode")
+	private Integer cPincode;
+	
+	@Column(name ="p_add1")
+	private String pAdd1;
+	
+	@Column(name="p_add2")
+	private String pAdd2;
+	
+	@Column(name="p_add3")
+	private String pAdd3;
+	
+	@Column(name="p_district")
+	private Integer pDistrict;
+	
+	@Column(name="p_state")
+	private String pState;
+	
+	@Column(name="p_pincode")
+	private Integer pPincode;
 	
 	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) { 
-		this.id = id;
-	}
-
-	public String getVehicleNo() {
-		return vehicleNo;
-	}
-
-	public void setVehicleNo(String vehicleNo) {
-		this.vehicleNo = vehicleNo;
-	}
-
-	public Date getTransactionDate() {
-		return transactionDate;
-	}
-
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
-	}
-
-	public String getVtClass() {
-		return vtClass;
-	}
-
-	public void setVtClass(String vtClass) {
-		this.vtClass = vtClass;
-	}
-
-	public String getVhClass() {
-		return vhClass;
-	}
-
-	public void setVhClass(String vhClass) {
-		this.vhClass = vhClass;
-	}
-
-	public Date getTaxUpto() {
-		return taxUpto;
-	}
-
-	public void setTaxUpto(Date taxUpto) {
-		this.taxUpto = taxUpto;
-	}
-
-	public Date getFitUpto() {
-		return fitUpto;
-	}
-
-	public void setFitUpto(Date fitUpto) {
-		this.fitUpto = fitUpto;
-	}
-
-	public Date getInsUpto() {
-		return insUpto;
-	}
-
-	public void setInsUpto(Date insUpto) {
-		this.insUpto = insUpto;
-	}
-
-	public String getNonUseStat() {
-		return nonUseStat;
-	}
-
-	public void setNonUseStat(String nonUseStat) {
-		this.nonUseStat = nonUseStat;
-	}
+	@Column(name="mobile_no")
+	private String mobileNo;
 	
-	
-	
+
 
 }

@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
+import lombok.Data;
+
 @MappedSuperclass
 public class BaseEntity implements Serializable {
 	private static final long serialVersionUID = 6950438514663523722L;

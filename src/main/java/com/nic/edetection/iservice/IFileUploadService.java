@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface IFileUploadService {
 	 public void init();
-	  public Boolean save(MultipartFile file);
+	  public String save(MultipartFile file,Long userId);
 	  public Resource load(String filename);
 	  public void deleteAll();
 	  public Stream<Path> loadAll();

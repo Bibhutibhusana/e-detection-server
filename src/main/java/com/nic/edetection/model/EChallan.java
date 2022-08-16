@@ -1,5 +1,6 @@
 package com.nic.edetection.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -8,167 +9,91 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import lombok.Data;
+
 @Entity
-@Table(name="echallan")
-public class EChallan extends BaseEntity {
+@Data
+@Table(name = "ed_echallan")
+public class EChallan extends BaseEntity implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
+	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="challan_track_id",unique=true,nullable=false)
+
+	@Column(name = "challan_track_id", unique = true, nullable = false)
 	private String challanTrackId;
-	
-	@Column(name="vehicle_no")
+
+	@Column(name = "vehicle_no")
 	private String vehicleNo;
-	
-	@Column(name="transaction_date")
+
+	@Column(name = "transaction_date")
 	private Date transactionDate;
-	
-	@Column(name="vt_class")
+
+	@Column(name = "vt_class")
 	private String vtClass;
-	 
-	@Column(name="vh_class")
+
+	@Column(name = "vh_class")
 	private String vhClass;
-	
-	@Column(name="purpose_code")
+
+	@Column(name = "purpose_code")
 	private String purposeCode;
 	
-	@Column(name="op_date")
-	private Date opDate = new Date(); 
+	@Column(name="offence_id")
+	private String offenceId;
 	
-	@Column(name="challan_no",unique= true)
+	@Column(name="challan_amt")
+	private Integer challanAmt;
+
+	@Column(name = "op_date")
+	private Date opDate = new Date();
+
+	@Column(name = "challan_no", unique = true)
 	private String challanNo;
-	
-	@Column(name="challan_issue_date")
+
+	@Column(name = "challan_issue_date")
 	private Date challanIssueDate;
-	
-	@Column(name="tax_upto")
+
+	@Column(name = "tax_upto")
 	private Boolean taxUpto;
-	
-	@Column(name="fit_upto")
+
+	@Column(name = "fit_upto")
 	private Boolean fitUpto;
-	
-	@Column(name="ins_upto")
+
+	@Column(name = "ins_upto")
 	private Boolean insUpto;
-	
-	@Column(name="nonusestat")
+
+	@Column(name = "puc_upto")
+	private Boolean pucUpto;
+
+	@Column(name = "permit_upto")
+	private Boolean permitUpto;
+
+	@Column(name = "nonusestat")
 	private Boolean nonUseStat;
-	
+
+	private String toll_name;
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public String getChallanTrackId() {
-		return challanTrackId;
+
+	@Transient
+	public String getToll_name() {
+		return toll_name;
 	}
 
-	public void setChallanTrackId(String challanTrackId) {
-		this.challanTrackId = challanTrackId;
+	public void setToll_name(String toll_name) {
+		this.toll_name = toll_name;
 	}
 
-	public String getVehicleNo() {
-		return vehicleNo;
-	}
-
-	public void setVehicleNo(String vehicleNo) {
-		this.vehicleNo = vehicleNo;
-	}
-
-	public Date getTransactionDate() {
-		return transactionDate;
-	}
-
-	public void setTransactionDate(Date transactionDate) {
-		this.transactionDate = transactionDate;
-	}
-
-	public String getVtClass() {
-		return vtClass;
-	}
-
-	public void setVtClass(String vtClass) {
-		this.vtClass = vtClass;
-	}
-
-	public String getVhClass() {
-		return vhClass;
-	}
-
-	public void setVhClass(String vhClass) {
-		this.vhClass = vhClass;
-	}
-
-	public String getPurposeCode() {
-		return purposeCode;
-	}
-
-	public void setPurposeCode(String purposeCode) {
-		this.purposeCode = purposeCode;
-	}
-
-	public Date getOpDate() {
-		return opDate;
-	}
-
-	public void setOpDate(Date opDate) {
-		this.opDate = opDate;
-	}
-
-	public String getChallanNo() {
-		return challanNo;
-	}
-
-	public void setChallanNo(String challanNo) {
-		this.challanNo = challanNo;
-	}
-
-	public Date getChallanIssueDate() {
-		return challanIssueDate;
-	}
-
-	public void setChallanIssueDate(Date challanIssueDate) {
-		this.challanIssueDate = challanIssueDate;
-	}
-
-	public Boolean getTaxUpto() {
-		return taxUpto;
-	}
-
-	public void setTaxUpto(Boolean taxUpto) {
-		this.taxUpto = taxUpto;
-	}
-
-	public Boolean getFitUpto() {
-		return fitUpto;
-	}
-
-	public void setFitUpto(Boolean fitUpto) {
-		this.fitUpto = fitUpto;
-	}
-
-	public Boolean getInsUpto() {
-		return insUpto;
-	}
-
-	public void setInsUpto(Boolean insUpto) {
-		this.insUpto = insUpto;
-	}
-
-	public Boolean getNonUseStat() {
-		return nonUseStat;
-	}
-
-	public void setNonUseStat(Boolean nonUseStat) {
-		this.nonUseStat = nonUseStat;
-	}
-	
-	
 	
 
 }
