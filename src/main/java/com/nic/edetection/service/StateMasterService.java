@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.nic.edetection.dto.StateMasterDto;
 import com.nic.edetection.iservice.IStateMasterService;
 import com.nic.edetection.repo.StateMasterRepo;
-
+@Service
 public class StateMasterService implements IStateMasterService{
 	@Autowired
 	private StateMasterRepo stateMasterRepo;

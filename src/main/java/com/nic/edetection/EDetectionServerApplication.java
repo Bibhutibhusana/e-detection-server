@@ -1,5 +1,9 @@
 package com.nic.edetection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.modelmapper.ModelMapper;
@@ -8,19 +12,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.nic.edetection.service.FileUploadService;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 
-//exclude = { DataSourceAutoConfiguration.class, 
-//	     HibernateJpaAutoConfiguration.class,
-//	     DataSourceTransactionManagerAutoConfiguration.class }
+
 @SpringBootApplication
-@CrossOrigin
 @Configuration
 @EnableEncryptableProperties
-//@EnableTransactionManagement
 public class EDetectionServerApplication extends SpringBootServletInitializer {
 	
 	@Bean
@@ -40,15 +42,24 @@ public class EDetectionServerApplication extends SpringBootServletInitializer {
 	    storageService.init();
 	  }
 	  
-//	  @Bean
-//	  public WebMvcConfigurer corsConfigurer() {
-//		  return new WebMvcConfigurerAdapter() {
-//			  @Override
-//			  public void addCorsMappings(CorsRegistry registry) {
-//				  registry.addMapping("/").allowedOrigins("http://localhost:4200");
-//			  }
-//		  };
-	//  }
+	  @Bean
+	  public CorsFilter corsFilter() {
+	      final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	      final CorsConfiguration config = new CorsConfiguration();
+	      config.setAllowCredentials(true);
+	      // Don't do this in production, use a proper list  of allowed origins
+	      List<String> origins = new ArrayList<String>();
+	      origins.add("http://localhost:4200");
+	      origins.add("http://192.168.137.105:4200");
+	      origins.add("http://192.168.29.199:4200");
+	      origins.add("https://odtransportmis.nic.in/eDetection");
+	      config.setAllowedOriginPatterns(origins);
+	      config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept","authorization"));
+	      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+	      source.registerCorsConfiguration("/**", config);
+	      return new CorsFilter(source);
+	  }
+	  
 
 }
    

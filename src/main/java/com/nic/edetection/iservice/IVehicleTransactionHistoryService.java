@@ -2,6 +2,7 @@ package com.nic.edetection.iservice;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -32,5 +33,10 @@ public interface IVehicleTransactionHistoryService {
 
 	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryByApplicationNoWithUser(
 			@Valid String vehicleNo);
+
+	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryListByTransactionDate(
+			@Valid Date transactionDate);
+
+	public Map<String, Boolean> deleteVehicleTransactionHistory( Long id) throws ResourceNotFoundException;
 
 }

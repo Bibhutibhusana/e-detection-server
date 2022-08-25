@@ -32,8 +32,6 @@ import com.nic.edetection.model.FileInfo;
 import com.nic.edetection.repo.VehicleTransactionHistoryRepository;
 
 @RestController
-@CrossOrigin
-//(origins = {"http://localhost:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1/")
 public class FileUploadController {
 	@Autowired  VehicleTransactionHistoryRepository vehicleTransactionHistoryRepo;

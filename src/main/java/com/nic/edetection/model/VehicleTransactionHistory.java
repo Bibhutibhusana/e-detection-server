@@ -34,7 +34,7 @@ public class VehicleTransactionHistory extends BaseEntity implements Serializabl
 	private String vtClass;
 
 	@Column(name = "transaction_date")
-	private Date TransactionDate;
+	private Date transactionDate;
 
 	@Column(name = "uniqueid", unique = true, nullable = false)
 	private String uniqueId;

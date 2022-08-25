@@ -19,7 +19,6 @@ import com.nic.edetection.model.OffenceMaster;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin
 public class OffenceMasterController {
 	@Autowired
 	private ModelMapper modelMapper;

@@ -1,6 +1,7 @@
 package com.nic.edetection.service;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,8 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.nic.edetection.dto.UserLoginDto;
+import com.nic.edetection.exception.ResourceNotFoundException;
 import com.nic.edetection.iservice.IUserLoginService;
 import com.nic.edetection.model.UserLogin;
+import com.nic.edetection.model.VehicleTransactionHistory;
 import com.nic.edetection.repo.UserLoginRepo;
 import com.nic.edetection.security.service.JwtUserDetailsService;
 
@@ -82,6 +85,22 @@ public class UserLoginService implements IUserLoginService ,Serializable {
 		// TODO Auto-generated method stub
 		System.out.println(transactionDate);
 		return userLoginRepo.getTollWiseTransactionDateDataUploadStatus(transactionDate);
+	}
+
+	@Override
+	public Map<String, Boolean> deleteUserById(Long id) throws ResourceNotFoundException {
+		// TODO Auto-generated method stub
+		UserLogin v = userLoginRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + id));
+		Map<String, Boolean> response = new HashMap<>();
+       
+		try {
+			userLoginRepo.delete(v);
+			 response.put("deleted", Boolean.TRUE);
+		}
+		catch(Exception e) {
+			 response.put("deleted", Boolean.FALSE);
+		}
+		return response;
 	}
 	
 

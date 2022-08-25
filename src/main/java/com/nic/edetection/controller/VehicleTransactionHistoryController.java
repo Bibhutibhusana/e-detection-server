@@ -1,5 +1,6 @@
 package com.nic.edetection.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,11 +21,8 @@ import com.nic.edetection.dto.VehicleTransactionHistoryDto;
 import com.nic.edetection.exception.ResourceNotFoundException;
 import com.nic.edetection.iservice.IUserLoginService;
 import com.nic.edetection.iservice.IVehicleTransactionHistoryService;
-import com.nic.edetection.model.VehicleTransactionHistory;
 
 @RestController
-@CrossOrigin
-//(origins={"http://localhost:4200","http://192.168.137.77:4200","http://192.168.43.199:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1")
 public class VehicleTransactionHistoryController {
 	@Autowired IVehicleTransactionHistoryService vehicleTransactionHistoryService;
@@ -33,6 +32,10 @@ public class VehicleTransactionHistoryController {
 	@GetMapping(value = "/vehicle-transaction-history")
 	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryList(){
 		return vehicleTransactionHistoryService.getVehicleTransactionHistoryList();
+	}
+	@PostMapping(value="/vehicle-transaction-history-by-transaction-date")
+	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryListByTransactionDate(@Valid @RequestBody Date transactionDate){
+		return vehicleTransactionHistoryService.getVehicleTransactionHistoryListByTransactionDate(transactionDate);
 	}
 	
 	@GetMapping("/vehicle-transaction-history/{id}")
@@ -46,7 +49,7 @@ public class VehicleTransactionHistoryController {
 	}
 
 	@PostMapping("/vehicle-transaction-history-upload-status-userwise")
-	public List<Map<Object,Object>> getTransactionHistoryUploadStatusUserWise(@RequestBody String userid){
+	public List<Map<Object,Object>> getTransactionHistoryUploadStatusUserWise(@RequestBody String userid){ 
 		return userLoginService.getTollWiseDataUploadStatus();
 	}
 	@PostMapping("transactionDate-history-by-transactionDate-upload-status-userwise")
@@ -58,5 +61,11 @@ public class VehicleTransactionHistoryController {
 	@GetMapping("vehicle-transaction-history-by-vehicle-no/{vehiclNo}")
 	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryListByApplicationNo(@Valid @PathVariable(name="vehicleNo") String vehicleNo){
 		return vehicleTransactionHistoryService.getVehicleTransactionHistoryByApplicationNoWithUser(vehicleNo);
+	}
+	
+	@DeleteMapping("/vehicle-transaction-history/{id}")
+	public Map<String, Boolean> deleteVehicleTransactionHistory( @PathVariable(value="id") Long id) throws ResourceNotFoundException{
+		System.out.println(id);
+		return vehicleTransactionHistoryService.deleteVehicleTransactionHistory(id);
 	}
 }

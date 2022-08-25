@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nic.edetection.dto.UserLoginDto;
+import com.nic.edetection.exception.ResourceNotFoundException;
 import com.nic.edetection.ip.IRequestService;
 import com.nic.edetection.iservice.IUserLoginService;
 import com.nic.edetection.security.JwtRequestFilter;
 import com.nic.edetection.security.JwtTokenUtil;
 
 @RestController
-@CrossOrigin
-//(origins = {"http://localhost:4200","http://localhost:41864","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1")
 public class UserLoginController {
 	@Autowired IUserLoginService userLoginService;
@@ -99,6 +99,11 @@ public class UserLoginController {
 	@GetMapping("/getTollNames")
 	private List<Map<Object, Object>> getTollName(){
 		return userLoginService.getTollNames();
+	}
+	
+	@DeleteMapping("/user/{id}")
+	private Map<String,Boolean> deleteUser(@PathVariable(value="id")Long id) throws ResourceNotFoundException{
+		return userLoginService.deleteUserById(id);
 	}
 
 }

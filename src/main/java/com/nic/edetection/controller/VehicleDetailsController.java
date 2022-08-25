@@ -23,8 +23,6 @@ import com.nic.edetection.iservice.IVehicleDetailsService;
 import com.nic.edetection.livedb.service.VehicleDetailsFromLiveDbService;
 
 @RestController
-@CrossOrigin
-//(origins={"http://localhost:4200","http://192.168.137.77:4200","http://192.168.43.199:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1")
 public class VehicleDetailsController {
 @Autowired IVehicleDetailsService vehicleDetailsService;

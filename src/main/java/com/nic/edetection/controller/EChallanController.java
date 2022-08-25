@@ -1,9 +1,10 @@
 package com.nic.edetection.controller;
 
-import java.math.BigInteger;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +14,20 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nic.edetection.dto.AccusedDto;
 import com.nic.edetection.dto.EChallanDto;
 import com.nic.edetection.dto.ITMSChallanDto;
@@ -30,10 +36,10 @@ import com.nic.edetection.iservice.IEChallanService;
 import com.nic.edetection.iservice.IUserLoginService;
 import com.nic.edetection.iservice.IVehicleDetailsService;
 
+import lombok.Data;
+
 
 @RestController
-@CrossOrigin
-//(origins={"http://localhost:4200","http://192.168.137.77:4200","http://192.168.43.199:4200","https://bibhutibhusana.github.io","http://localhost:8081","http://localhost"})
 @RequestMapping("/api/v1")
 public class EChallanController {
 	@Autowired
@@ -73,7 +79,7 @@ public class EChallanController {
 	}
 	
 	@PostMapping("/saveEChallanAndCallIfms")
-	private List<ITMSChallanDto> saveAllEChallanAndCallIfms(@Valid @RequestBody List<EChallanDto> echallans) throws ParseException{
+	private List<ITMSChallanDto> saveAllEChallanAndCallIfms(@Valid @RequestBody List<EChallanDto> echallans) throws Exception{
 		try {
 		eChallanService.saveAllEChallan(echallans);
 		}
@@ -94,7 +100,7 @@ public class EChallanController {
 			accused.setRemark("Detected through eDetection");
 			accused.setAcc_id((String) item.get("challan_doc_no"));
 			accused.setAcc_name((String) item.get("acc_name"));
-			accused.setAcc_mobile_no((String) item.get("acc_mob_no"));
+			accused.setAcc_mob_no((String) item.get("acc_mob_no"));
 			accused.setAcc_father((String) item.get("acc_father"));
 			String cadd = (String)item.get("c_add1") +", "+(String)item.get("c_add2")+", "+(String)item.get("c_district")+", "+(String)item.get("c_state")+", "+(String)item.get("c_pincode");
 			String padd = (String)item.get("p_add1") +", "+(String)item.get("p_add2")+", "+(String)item.get("p_district")+", "+(String)item.get("p_state")+", "+(String)item.get("p_pincode");
@@ -108,7 +114,7 @@ public class EChallanController {
 			itemsChallan.setOffence_id(item.get("offence_id").toString());
 			itemsChallan.setSpeed_limit(0);
 			itemsChallan.setActual_speed(0);
-			itemsChallan.setDistrict_id((int)item.get("district_id"));
+			itemsChallan.setDistrict_id(item.get("district_id").toString());
 			Date challanDate = (Date)item.get("challan_time");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String chDate = sdf.format(challanDate);
@@ -127,11 +133,37 @@ public class EChallanController {
 			String[] imgList = {"","",""};
 			itemsChallan.setChallan_vehicle_img(imgList);
 			itemsChallan.setType(7);
-			itemsChallan.setViolation_id(((BigInteger)(item.get("violation_id"))).longValue());
-			itemsChallan.setChallan_source_type("eDetection");
+			itemsChallan.setViolation_id(item.get("violation_id").toString());
+			itemsChallan.setChallan_source_type("eDetection"); 
 			itmsChallans.add(itemsChallan);
+			String resOut =  demoPostRESTAPI(itemsChallan);
+//			Response res = (Response) resOut;
+			///////////////// Calling ITMS Api for challan issuance
+//			String url ="https://staging.parivahan.gov.in/echallann/api/citizen-challan";
+//			RestTemplate restTemplate = new RestTemplate();
+//			List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();        
+//			//Add the Jackson Message converter
+//			MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//
+//			// Note: here we are making this converter to process any kind of response, 
+//			// not only application/*json, which is the default behaviour
+//			converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));        
+//			messageConverters.add(converter);  
+//			restTemplate.setMessageConverters(messageConverters); 
+//			Response res = restTemplate.postForObject(url,itemsChallan, Response.class);
+//			System.out.println(res.message+"  "+res.result.challan_no + "   vehicle_no:"+itemsChallan.getChallan_doc_no());
+			System.out.println(resOut);
+			Response res = new ObjectMapper().readValue(resOut, Response.class);  
+//			System.out.println(res);
+			System.out.println("challan_No:"+res.status);
+			System.out.println("Challan_link"+res.result.challan_pdf);	
+		
+			
 		}
 		}
+		
+		
+		
 		
 		
 //		for(EChallanDto e : echallans) {
@@ -143,6 +175,67 @@ public class EChallanController {
 		
 		
 	}
+
+///////////////////// Function for ITMS api call////////////////////////////
+	
+	public  String demoPostRESTAPI(ITMSChallanDto itmsChallan) throws Exception 
+	{
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+	      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+	      HttpEntity<ITMSChallanDto> entity = new HttpEntity<ITMSChallanDto>(itmsChallan,headers);
+//	      try {
+	      return restTemplate.exchange(
+	         "https://staging.parivahan.gov.in/echallann/api/citizen-challan", HttpMethod.POST, entity, String.class).getBody();
+//	      }
+//	      catch(HttpStatusCodeException e) {
+//	          return ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
+//	                  .body(e.getResponseBodyAsString());
+//	       }
+//		
+		
+		
+	}
+//	  DefaultHttpClient httpClient = new DefaultHttpClient();
+//	   
+//	  
+//	   
+//	  StringWriter writer = new StringWriter();
+//	  JAXBContext jaxbContext = JAXBContext.newInstance(ITMSChallanDto.class);
+//	  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+//	  jaxbMarshaller.marshal(itmsChallan, writer);
+//	   
+//	  try
+//	  {
+//	    //Define a postRequest request
+//	    HttpPost postRequest = new HttpPost("https://staging.parivahan.gov.in/echallann/api/citizen-challan");
+//	     
+//	    //Set the API media type in http content-type header
+//	    postRequest.addHeader("content-type", "application/xml");
+//	     
+//	    //Set the request post body
+//	    StringEntity userEntity = new StringEntity(writer.getBuffer().toString());
+//	    postRequest.setEntity(userEntity);
+//	      
+//	    //Send the request; It will immediately return the response in HttpResponse object if any
+//	    org.apache.http.HttpResponse response = httpClient.execute(postRequest);
+//	    System.out.println(response.getEntity()+"  "+response.getParams() + "   vehicle_no:"+response.getEntity().getContent());
+//	     
+//	    //verify the valid error code first
+//	    int statusCode = response.getStatusLine().getStatusCode();
+//	    if (statusCode != 201) 
+//	    {
+//	      throw new RuntimeException("Failed with HTTP error code : " + statusCode);
+//	    }
+//	  }
+//	  finally
+//	  {
+//	    //Important: Close the connect
+//	    httpClient.getConnectionManager().shutdown();
+//	  }
+//	}
+	
+	
 	@PostMapping("/echallan-get-by-date")
 	private List<EChallanDto> getEChallanListByDate(@Valid @RequestBody Map<String,String> date) throws ParseException{
 		List<EChallanDto> challanList =  eChallanService.getEChallanListByDate(date.get("fromDt"),date.get("toDt"));
@@ -186,10 +279,22 @@ public class EChallanController {
 	}
 	
 	@GetMapping("/totalChallanIssued")
-	private Long getTotalChallanIssued() {
+	private Long getTotalChallanIssued() { 
 		return eChallanService.getTotalIssuedChallans();
 	}
 	
 
 
+}
+
+@Data
+class Response implements Serializable {
+	String status;
+	String message;
+	result result;
+}
+@Data
+class result implements Serializable{
+	 String challan_no;
+	 String challan_pdf;
 }

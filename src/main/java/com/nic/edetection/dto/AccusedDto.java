@@ -8,7 +8,7 @@ public class AccusedDto {
 	private String remark;
 	private String acc_id;
 	private String acc_name;
-	private String acc_mobile_no;
+	private String acc_mob_no;
 	private String acc_father;
 	private String acc_address;
 	

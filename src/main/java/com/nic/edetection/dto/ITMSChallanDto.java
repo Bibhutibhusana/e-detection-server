@@ -18,7 +18,7 @@ public class ITMSChallanDto {
 	@JsonProperty(value="actual_speed")
 	private int actual_speed;
 	@JsonProperty(value="district_id")
-	private int district_id;
+	private String district_id;
 	@JsonProperty(value="challan_time")
 	private String challan_time;
 	@JsonProperty(value="challan_address")
@@ -45,7 +45,7 @@ public class ITMSChallanDto {
 	@JsonProperty(value="type")
 	private int type;
 	@JsonProperty(value="violation_id")
-	private Long violation_id;
+	private String violation_id;
 	@JsonProperty(value="challan_source_type")
 	private String challan_source_type;
 	

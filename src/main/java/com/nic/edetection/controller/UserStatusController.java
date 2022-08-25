@@ -16,7 +16,6 @@ import com.nic.edetection.iservice.IUserStatusService;
 
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/")
 public class UserStatusController {
 	@Autowired

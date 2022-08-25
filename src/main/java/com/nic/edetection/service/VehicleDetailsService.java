@@ -92,12 +92,7 @@ public class VehicleDetailsService implements IVehicleDetailsService {
 		else {
 			return null;
 		}
-		// return vehicleDetailsRepository.findByTransactionDateGreaterThan();
-		// return vehicleDetailsRepository.findInvalidVehiclesByType(offenseType,
-		// offenseType);
-
-		// return
-		// vehicleDetailsRepository.findAllWhereTransactionDateGreaterThanTaxUpto();
+		
 	}
 
 	public List<VehicleDetailsDto> getVehicleDetailsListByDate(String transactionDate) throws ParseException {
@@ -184,7 +179,6 @@ public class VehicleDetailsService implements IVehicleDetailsService {
 
 	@Override
 	public List<Map<String, Object>> getITMSObjectListByUniqueId(List<String> uniqueIds) {
-		// TODO Auto-generated method stub
 		return vehicleDetailsRepository.findITMSObjectListByUniqueId(uniqueIds);
 	}
 

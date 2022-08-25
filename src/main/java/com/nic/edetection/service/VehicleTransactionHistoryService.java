@@ -1,7 +1,9 @@
 package com.nic.edetection.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -82,5 +84,32 @@ public class VehicleTransactionHistoryService implements IVehicleTransactionHist
 		return vehList;
 	}
 
+	@Override
+	public List<VehicleTransactionHistoryDto> getVehicleTransactionHistoryListByTransactionDate(
+			@Valid Date transactionDate) {
+		Date toDt;
+		toDt =new Date(transactionDate.getTime() + 1 * 24 * 60 * 60 * 1000);
+		// TODO Auto-generated method stub
+		List<VehicleTransactionHistory> vehList = vehicleTransactionHistoryRepository.findByTransactionDateBetween(transactionDate, toDt);
+		List<VehicleTransactionHistoryDto> vehHistory = vehList.stream().map(value -> modelMapper.map(value,VehicleTransactionHistoryDto.class)).collect(Collectors.toList());
+		return vehHistory;
+	}
+
+	@Override
+	public Map<String, Boolean> deleteVehicleTransactionHistory(@Valid Long id) throws ResourceNotFoundException{
+		// TODO Auto-generated method stub
+		VehicleTransactionHistory v = vehicleTransactionHistoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Vehicle History not found for this id :: " + id));
+		Map<String, Boolean> response = new HashMap<>();
+       
+		try {
+			vehicleTransactionHistoryRepository.delete(v);
+			 response.put("deleted", Boolean.TRUE);
+		}
+		catch(Exception e) {
+			 response.put("deleted", Boolean.FALSE);
+		}
+		return response;
+	}
+ 
 
 }

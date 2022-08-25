@@ -50,7 +50,7 @@ public interface EChallanRepo extends JpaRepository<EChallan,Long>{
 	@Query(value = "select count(*) from edetection.ed_echallan e where e.challan_no is not null ",nativeQuery=true)
 	Long getTotalIssuedChallans();
 
-	@Query(value="select ec.challan_amt,ec.offence_id as offence_id, e.id, e.createdby, e.createddate, e.updatedby, e.updateddate, e.hibversionno, challan_issue_date, challan_no, challan_track_id,"
+	@Query(value="select e.id, e.createdby, e.createddate, e.updatedby, e.updateddate, e.hibversionno, challan_issue_date, challan_no, challan_track_id,"
 			+ "	fit_upto, ins_upto, nonusestat, op_date, purpose_code, tax_upto,permit_upto, puc_upto, e.transaction_date, e.vehicle_no, e.vh_class, e.vt_class,ul.toll_name,e.offence_id, e.challan_amt "
 			+ "	from edetection.ed_echallan e left join edetection.ed_vehicle_transaction_history vh on  vh.uniqueid = e.challan_track_id"
 			+ "	left join edetection.ed_user_login ul on vh.createdby = ul.id where (vh.transaction_date"
