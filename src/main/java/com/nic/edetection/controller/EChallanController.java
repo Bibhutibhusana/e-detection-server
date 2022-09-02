@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -19,12 +21,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,7 +83,7 @@ public class EChallanController {
 	}
 	
 	@PostMapping("/saveEChallanAndCallIfms")
-	private List<ITMSChallanDto> saveAllEChallanAndCallIfms(@Valid @RequestBody List<EChallanDto> echallans) throws Exception{
+	private List<EChallanDto> saveAllEChallanAndCallIfms(@Valid @RequestBody List<EChallanDto> echallans) throws Exception{
 		try {
 		eChallanService.saveAllEChallan(echallans);
 		}
@@ -90,53 +94,9 @@ public class EChallanController {
                 .map(value -> value.getChallanTrackId())
                 .collect(Collectors.toList());
 		
-		List<Map<String,Object>> itemsObjectList = vehicleDetailsService.getITMSObjectListByUniqueId(uniqueIdList); 
 		
-		List<ITMSChallanDto> itmsChallans = new ArrayList<ITMSChallanDto>();
-		if(itemsObjectList.size() != 0) {
-		for(Map<String,Object>item: itemsObjectList) {
-			AccusedDto accused = new AccusedDto();
-			accused.setAcc_type("owner");
-			accused.setRemark("Detected through eDetection");
-			accused.setAcc_id((String) item.get("challan_doc_no"));
-			accused.setAcc_name((String) item.get("acc_name"));
-			accused.setAcc_mob_no((String) item.get("acc_mob_no"));
-			accused.setAcc_father((String) item.get("acc_father"));
-			String cadd = (String)item.get("c_add1") +", "+(String)item.get("c_add2")+", "+(String)item.get("c_district")+", "+(String)item.get("c_state")+", "+(String)item.get("c_pincode");
-			String padd = (String)item.get("p_add1") +", "+(String)item.get("p_add2")+", "+(String)item.get("p_district")+", "+(String)item.get("p_state")+", "+(String)item.get("p_pincode");
-			accused.setAcc_address(cadd);
-			accused.setPermanent_address(padd);
-			accused.setAcc_img("");
-			accused.setCctv_image_1("");
-			accused.setCctv_image_2("");
-			ITMSChallanDto itemsChallan = new ITMSChallanDto();
-			itemsChallan.setChallan_amt((int)item.get("challan_amt"));
-			itemsChallan.setOffence_id(item.get("offence_id").toString());
-			itemsChallan.setSpeed_limit(0);
-			itemsChallan.setActual_speed(0);
-			itemsChallan.setDistrict_id(item.get("district_id").toString());
-			Date challanDate = (Date)item.get("challan_time");
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String chDate = sdf.format(challanDate);
-			
-			itemsChallan.setChallan_time(chDate);
-			itemsChallan.setChallan_address((String) item.get("challan_address")+" Toll Gate");	
-			itemsChallan.setLat((String)item.get("lat"));
-			itemsChallan.setLongitude((String) item.get("long"));
-			itemsChallan.setChallan_doc_no((String) item.get("challan_doc_no"));
-			itemsChallan.setAcc_vehicle_class((String) item.get("acc_vehicle_class"));
-			itemsChallan.setAccused_type("owner");
-			Map<String,AccusedDto> accused1 = new HashMap<>();
-			accused1.put("owner", accused);
-			itemsChallan.setAccused(accused1);
-			itemsChallan.setDl_number("NO DL");
-			String[] imgList = {"","",""};
-			itemsChallan.setChallan_vehicle_img(imgList);
-			itemsChallan.setType(7);
-			itemsChallan.setViolation_id(item.get("violation_id").toString());
-			itemsChallan.setChallan_source_type("eDetection"); 
-			itmsChallans.add(itemsChallan);
-			String resOut =  demoPostRESTAPI(itemsChallan);
+//			String resOut =   eChallanService.demoPostRESTAPI(itemsChallan).get();
+//			Thread.sleep(30000);
 //			Response res = (Response) resOut;
 			///////////////// Calling ITMS Api for challan issuance
 //			String url ="https://staging.parivahan.gov.in/echallann/api/citizen-challan";
@@ -152,15 +112,16 @@ public class EChallanController {
 //			restTemplate.setMessageConverters(messageConverters); 
 //			Response res = restTemplate.postForObject(url,itemsChallan, Response.class);
 //			System.out.println(res.message+"  "+res.result.challan_no + "   vehicle_no:"+itemsChallan.getChallan_doc_no());
-			System.out.println(resOut);
-			Response res = new ObjectMapper().readValue(resOut, Response.class);  
-//			System.out.println(res);
-			System.out.println("challan_No:"+res.status);
-			System.out.println("Challan_link"+res.result.challan_pdf);	
-		
+//			
+//			Response res = new ObjectMapper().readValue(resOut, Response.class);  
+////			System.out.println(res);
+//			System.out.println("challan_No:"+res.status);
+//			System.out.println("Challan_link"+res.result.challan_pdf);	
+////		
 			
-		}
-		}
+		
+		CompletableFuture<String> responses = eChallanService.demoPostRESTAPI(uniqueIdList);
+		
 		
 		
 		
@@ -171,22 +132,27 @@ public class EChallanController {
 //			List<Map<String,Object>> itmsObjectList = vehicleDetailsService.getITMSObjectListByUniqueId(uniqueId); 
 //		}
 		ResponseEntity<String> res = ResponseEntity.ok().body("success");
-		return itmsChallans;
+		return echallans;
 		
 		
 	}
-
+ 
 ///////////////////// Function for ITMS api call////////////////////////////
-	
-	public  String demoPostRESTAPI(ITMSChallanDto itmsChallan) throws Exception 
+
+//	@Async("threadPoolTaskExecutor")
+	public    CompletableFuture<String> demoPostRESTAPI(ITMSChallanDto itmsChallan) throws RestClientException, InterruptedException, ExecutionException 
 	{
+		System.out.println("System called"+itmsChallan.getChallan_doc_no());
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 	      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 	      HttpEntity<ITMSChallanDto> entity = new HttpEntity<ITMSChallanDto>(itmsChallan,headers);
 //	      try {
-	      return restTemplate.exchange(
+	     
+	      String res =  restTemplate.exchange(
 	         "https://staging.parivahan.gov.in/echallann/api/citizen-challan", HttpMethod.POST, entity, String.class).getBody();
+	      System.out.println("result is"+res);
+	      return CompletableFuture.completedFuture(res);
 //	      }
 //	      catch(HttpStatusCodeException e) {
 //	          return ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
@@ -196,8 +162,7 @@ public class EChallanController {
 		
 		
 	}
-//	  DefaultHttpClient httpClient = new DefaultHttpClient();
-//	   
+	
 //	  
 //	   
 //	  StringWriter writer = new StringWriter();

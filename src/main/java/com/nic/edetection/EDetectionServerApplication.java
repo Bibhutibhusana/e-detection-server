@@ -3,6 +3,7 @@ package com.nic.edetection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.annotation.Resource;
 
@@ -12,6 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -23,6 +26,7 @@ import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 @SpringBootApplication
 @Configuration
 @EnableEncryptableProperties
+@EnableAsync
 public class EDetectionServerApplication extends SpringBootServletInitializer {
 	
 	@Bean
@@ -58,6 +62,19 @@ public class EDetectionServerApplication extends SpringBootServletInitializer {
 	      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
 	      source.registerCorsConfiguration("/**", config);
 	      return new CorsFilter(source);
+	  }
+	  
+	  
+	  
+	  @Bean(name = "threadPoolTaskExecutor")
+	  public Executor asyncExecutor() {
+	     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+	     executor.setCorePoolSize(4);
+	     executor.setMaxPoolSize(4);
+	     executor.setQueueCapacity(50);
+	     executor.setThreadNamePrefix("AsynchThread::");
+	     executor.initialize();
+	     return executor;
 	  }
 	  
 

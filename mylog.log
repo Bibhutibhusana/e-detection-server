@@ -1,0 +1,48 @@
+2022-08-30 11:50:36.636  INFO 9884 --- [restartedMain] c.n.e.EDetectionServerApplication        : Starting EDetectionServerApplication using Java 17.0.1 on legendBibhu with PID 9884 (D:\NIC\Applications\Vahan_app\vahan_app\eDetection2.0\e-detection-server-2.0\target\classes started by Dell in D:\NIC\Applications\Vahan_app\vahan_app\eDetection2.0\e-detection-server-2.0)
+2022-08-30 11:50:36.636  INFO 9884 --- [restartedMain] c.n.e.EDetectionServerApplication        : No active profile set, falling back to default profiles: default
+2022-08-30 11:50:37.424  INFO 9884 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-08-30 11:50:37.446  INFO 9884 --- [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 10 JPA repository interfaces.
+2022-08-30 11:50:37.478  INFO 9884 --- [restartedMain] ptablePropertiesBeanFactoryPostProcessor : Post-processing PropertySource instances
+2022-08-30 11:50:37.478  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource configurationProperties [org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource] to AOP Proxy
+2022-08-30 11:50:37.478  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource commandLineArgs [org.springframework.core.env.SimpleCommandLinePropertySource] to EncryptableEnumerablePropertySourceWrapper
+2022-08-30 11:50:37.478  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource servletConfigInitParams [org.springframework.core.env.PropertySource$StubPropertySource] to EncryptablePropertySourceWrapper
+2022-08-30 11:50:37.478  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource servletContextInitParams [org.springframework.core.env.PropertySource$StubPropertySource] to EncryptablePropertySourceWrapper
+2022-08-30 11:50:37.479  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource systemProperties [org.springframework.core.env.PropertiesPropertySource] to EncryptableMapPropertySourceWrapper
+2022-08-30 11:50:37.479  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource systemEnvironment [org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor$OriginAwareSystemEnvironmentPropertySource] to EncryptableSystemEnvironmentPropertySourceWrapper
+2022-08-30 11:50:37.479  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource random [org.springframework.boot.env.RandomValuePropertySource] to EncryptablePropertySourceWrapper
+2022-08-30 11:50:37.479  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' [org.springframework.boot.env.OriginTrackedMapPropertySource] to EncryptableMapPropertySourceWrapper
+2022-08-30 11:50:37.479  INFO 9884 --- [restartedMain] c.u.j.EncryptablePropertySourceConverter : Converting PropertySource devtools [org.springframework.core.env.MapPropertySource] to EncryptableMapPropertySourceWrapper
+2022-08-30 11:50:37.485  INFO 9884 --- [restartedMain] c.u.j.filter.DefaultLazyPropertyFilter   : Property Filter custom Bean not found with name 'encryptablePropertyFilter'. Initializing Default Property Filter
+2022-08-30 11:50:37.495  INFO 9884 --- [restartedMain] c.u.j.r.DefaultLazyPropertyResolver      : Property Resolver custom Bean not found with name 'encryptablePropertyResolver'. Initializing Default Property Resolver
+2022-08-30 11:50:37.497  INFO 9884 --- [restartedMain] c.u.j.d.DefaultLazyPropertyDetector      : Property Detector custom Bean not found with name 'encryptablePropertyDetector'. Initializing Default Property Detector
+2022-08-30 11:50:37.554  INFO 9884 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8090 (http)
+2022-08-30 11:50:37.554  INFO 9884 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-08-30 11:50:37.554  INFO 9884 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.56]
+2022-08-30 11:50:37.564  INFO 9884 --- [restartedMain] o.a.c.c.C.[.[.[/eDetectionServer]        : Initializing Spring embedded WebApplicationContext
+2022-08-30 11:50:37.564  INFO 9884 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 926 ms
+2022-08-30 11:50:37.595  INFO 9884 --- [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-08-30 11:50:37.598  INFO 9884 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Starting...
+2022-08-30 11:50:37.716  INFO 9884 --- [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Start completed.
+2022-08-30 11:50:37.717  INFO 9884 --- [restartedMain] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL92Dialect
+2022-08-30 11:50:37.870  INFO 9884 --- [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-08-30 11:50:37.870  INFO 9884 --- [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-08-30 11:50:37.953  WARN 9884 --- [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2022-08-30 11:50:38.306  INFO 9884 --- [restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@598e5a32, org.springframework.security.web.context.SecurityContextPersistenceFilter@2d48663c, org.springframework.security.web.header.HeaderWriterFilter@19316b02, org.springframework.web.filter.CorsFilter@33bc0d48, org.springframework.security.web.authentication.logout.LogoutFilter@5d406fc8, com.nic.edetection.security.JwtRequestFilter@3fdf4e4e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4c8f306a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@10c4097a, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@19a0e594, org.springframework.security.web.session.SessionManagementFilter@771a9557, org.springframework.security.web.access.ExceptionTranslationFilter@69c804d1, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@74ccbe0e]
+2022-08-30 11:50:38.446  INFO 9884 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2022-08-30 11:50:38.455  INFO 9884 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8090 (http) with context path '/eDetectionServer'
+2022-08-30 11:50:38.459  INFO 9884 --- [restartedMain] c.n.e.EDetectionServerApplication        : Started EDetectionServerApplication in 1.861 seconds (JVM running for 53376.569)
+2022-08-30 11:50:38.460  INFO 9884 --- [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2022-08-30 11:50:44.799  INFO 9884 --- [http-nio-8090-exec-2] o.a.c.c.C.[.[.[/eDetectionServer]        : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-08-30 11:50:44.799  INFO 9884 --- [http-nio-8090-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-08-30 11:50:44.800  INFO 9884 --- [http-nio-8090-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-08-30 11:50:44.813  WARN 9884 --- [http-nio-8090-exec-3] c.n.e.security.JwtRequestFilter          : JWT Token does not begin with Bearer String
+2022-08-30 11:50:44.813  WARN 9884 --- [http-nio-8090-exec-4] c.n.e.security.JwtRequestFilter          : JWT Token does not begin with Bearer String
+2022-08-30 11:50:44.823  INFO 9884 --- [http-nio-8090-exec-4] c.n.e.controller.UserLoginController     : this is a info message
+2022-08-30 11:50:44.908  WARN 9884 --- [http-nio-8090-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.IllegalArgumentException: source cannot be null]
+2022-08-30 11:50:45.126  WARN 9884 --- [http-nio-8090-exec-3] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [java.lang.Exception: INVALID_CREDENTIALS]
+2022-08-30 11:51:24.457  WARN 9884 --- [http-nio-8090-exec-8] c.n.e.security.JwtRequestFilter          : JWT Token does not begin with Bearer String
+2022-08-30 11:51:24.466  WARN 9884 --- [http-nio-8090-exec-7] c.n.e.security.JwtRequestFilter          : JWT Token does not begin with Bearer String
+2022-08-30 11:51:24.467  INFO 9884 --- [http-nio-8090-exec-7] c.n.e.controller.UserLoginController     : this is a info message
+2022-08-30 12:18:47.925  INFO 9884 --- [Thread-21] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-08-30 12:18:47.971  INFO 9884 --- [Thread-21] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown initiated...
+2022-08-30 12:18:47.981  INFO 9884 --- [Thread-21] com.zaxxer.hikari.HikariDataSource       : HikariPool-4 - Shutdown completed.

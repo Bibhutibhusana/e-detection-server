@@ -57,6 +57,9 @@ public interface EChallanRepo extends JpaRepository<EChallan,Long>{
 			+ "	between ?1 and ?2) and ul.active  and e.challan_no is null group by e.id,e.transaction_date,ul.toll_name",nativeQuery = true)
 	List<EChallan> findAllByTransactionDateBetweenAndChallanNoIsNull(Date fd, Date td);
 
+	@Query(value="update edetection.ed_echallan  set challan_issue_date = now(), challan_no=?1 where id=?2;" , nativeQuery=true)
+	EChallan updateChallanDetailsById(String challan_no,Long valueOf);
+
 
 }
  

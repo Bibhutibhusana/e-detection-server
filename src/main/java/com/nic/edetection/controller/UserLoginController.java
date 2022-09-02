@@ -2,6 +2,8 @@ package com.nic.edetection.controller;
 
 
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import com.nic.edetection.security.JwtTokenUtil;
 @RestController
 @RequestMapping("/api/v1")
 public class UserLoginController {
+	private static final Logger logger = LoggerFactory.getLogger(UserLoginController.class);
 	@Autowired IUserLoginService userLoginService;
 	
 	@Autowired JwtTokenUtil jwtTokenUtils;
@@ -76,6 +79,7 @@ public class UserLoginController {
 	
 	@PostMapping("/user/getByUserIdAndPassword")
 	private UserLoginDto getUserByUserIdAndPassword(@RequestBody Map<String,String> user){
+		 logger.info("this is a info message");
 		return userLoginService.getUserLoginByUserIdAndPassword(user.get("username"),user.get("password"));
 	}
 

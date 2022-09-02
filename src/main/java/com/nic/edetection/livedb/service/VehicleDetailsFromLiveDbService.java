@@ -74,6 +74,7 @@ public class VehicleDetailsFromLiveDbService {
 		try {
 			// for(VehicleTransactionHistory vth : vehicleTransactionHistoryList) {
 			// vehicleTransactionHistoryList.size()
+			if(con != null) {
 			int rowIndex = 0;
 
 			pst = con.prepareStatement(liveDbQuery);
@@ -177,6 +178,10 @@ public class VehicleDetailsFromLiveDbService {
 
 			pst.close();
 			return true;
+			}
+			else {
+				return false;
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 //	            e.printStackTrace();

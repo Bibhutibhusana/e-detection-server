@@ -1,22 +1,43 @@
 package com.nic.edetection.service;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nic.edetection.dto.AccusedDto;
 import com.nic.edetection.dto.EChallanDto;
+import com.nic.edetection.dto.ITMSChallanDto;
 import com.nic.edetection.exception.ResourceNotFoundException;
 import com.nic.edetection.iservice.IEChallanService;
 import com.nic.edetection.model.EChallan;
 import com.nic.edetection.repo.EChallanRepo;
+
+import lombok.Data;
 
 @Service
 @Transactional
@@ -26,6 +47,9 @@ public class EChallanService implements IEChallanService{
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private VehicleDetailsService vehicleDetailsService;
 	
 //	@Autowired
 //	private ListUtility listUtility;
@@ -119,4 +143,107 @@ public class EChallanService implements IEChallanService{
 
 
 
+	
+	@Async("threadPoolTaskExecutor")
+	public  CompletableFuture<String> demoPostRESTAPI(List<String> uniqueIdList) throws JsonMappingException, JsonProcessingException 
+	{
+		
+List<Map<String,Object>> itemsObjectList = vehicleDetailsService.getITMSObjectListByUniqueId(uniqueIdList); 
+		
+		List<ITMSChallanDto> itmsChallans = new ArrayList<ITMSChallanDto>();
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+	      headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		List<Response> responseList=new ArrayList<Response>();
+		if(itemsObjectList.size() != 0) {
+		for(Map<String,Object>item: itemsObjectList) {
+			AccusedDto accused = new AccusedDto();
+			accused.setAcc_type("owner");
+			accused.setRemark("Detected through eDetection");
+			accused.setAcc_id((String) item.get("challan_doc_no"));
+			accused.setAcc_name((String) item.get("acc_name"));
+			accused.setAcc_mob_no((String) item.get("acc_mob_no"));
+			accused.setAcc_father((String) item.get("acc_father"));
+			String cadd = (String)item.get("c_add1") +", "+(String)item.get("c_add2")+", "+(String)item.get("c_district")+", "+(String)item.get("c_state")+", "+(String)item.get("c_pincode");
+			String padd = (String)item.get("p_add1") +", "+(String)item.get("p_add2")+", "+(String)item.get("p_district")+", "+(String)item.get("p_state")+", "+(String)item.get("p_pincode");
+			accused.setAcc_address(cadd);
+			accused.setPermanent_address(padd);
+			accused.setAcc_img("");
+			accused.setCctv_image_1("");
+			accused.setCctv_image_2("");
+			ITMSChallanDto itemsChallan = new ITMSChallanDto();
+			itemsChallan.setChallan_amt((int)item.get("challan_amt"));
+			itemsChallan.setOffence_id(item.get("offence_id").toString());
+			itemsChallan.setSpeed_limit(0);
+			itemsChallan.setActual_speed(0);
+			itemsChallan.setDistrict_id(item.get("district_id").toString());
+			Date challanDate = (Date)item.get("challan_time");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String chDate = sdf.format(challanDate);
+			
+			itemsChallan.setChallan_time(chDate);
+			itemsChallan.setChallan_address((String) item.get("challan_address")+" Toll Gate");	
+			itemsChallan.setLat((String)item.get("lat"));
+			itemsChallan.setLongitude((String) item.get("long"));
+			itemsChallan.setChallan_doc_no((String) item.get("challan_doc_no"));
+			itemsChallan.setAcc_vehicle_class((String) item.get("acc_vehicle_class"));
+			itemsChallan.setAccused_type("owner");
+			Map<String,AccusedDto> accused1 = new HashMap<>();
+			accused1.put("owner", accused);
+			itemsChallan.setAccused(accused1);
+			itemsChallan.setDl_number("NO DL");
+			String[] imgList = {"","",""};
+			itemsChallan.setChallan_vehicle_img(imgList);
+			itemsChallan.setType(7);
+			itemsChallan.setViolation_id(item.get("violation_id").toString());
+			itemsChallan.setChallan_source_type("eDetection"); 
+			
+			itmsChallans.add(itemsChallan);
+			
+		
+
+	      HttpEntity<ITMSChallanDto> entity = new HttpEntity<ITMSChallanDto>(itemsChallan,headers);
+//	      try {
+	      ResponseEntity<String> res =  restTemplate.exchange(
+	         "https://staging.parivahan.gov.in/echallann/api/citizen-challan", HttpMethod.POST, entity, String.class);
+	      System.out.println("result is"+res);
+	      Response resOut = new ObjectMapper().readValue(res.getBody(), Response.class); 
+	      
+	    eChallanRepo.updateChallanDetailsById(resOut.result.challan_no,Long.valueOf(itemsChallan.getViolation_id()));
+//	      Optional<EChallan> eChallanToUpdate = eChallanRepo.findById(Long.valueOf(itemsChallan.getViolation_id()));
+//	      EChallan echallan = eChallanToUpdate.get();
+//	      echallan.setChallanNo(resOut.result.challan_no);
+//	      echallan.setChallanIssueDate(new Date());
+//	      eChallanRepo.save(echallan);
+	      
+	      responseList.add(resOut);
+	    
+//	      }
+//	      catch(HttpStatusCodeException e) {
+//	          return ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
+//	                  .body(e.getResponseBodyAsString());
+//	       }
+//		
+ 		}
+		
+		}
+ 		return CompletableFuture.completedFuture("Success");
+	}
+//	  DefaultHttpClient httpClient = new DefaultHttpClient();
+//	   
+
+
+}
+
+
+@Data
+class Response implements Serializable {
+	String status;
+	String message;
+	result result;
+}
+@Data
+class result implements Serializable{
+	 String challan_no;
+	 String challan_pdf;
 }

@@ -18,7 +18,7 @@ public interface VehicleTransactionHistoryRepository extends JpaRepository<Vehic
 	@Query(value="COPY edetection.ed_vehicle_transaction_history FROM  "+"?1"+" WITH CSV HEADER; -- must be superuser",nativeQuery = true)
 	void importDataToTable( String path);
 
-	@Query(value="select * from edetection.ed_vehicle_transaction_history where status is null and transaction_date >?1  and transaction_date < ?2 limit 10",nativeQuery = true)
+	@Query(value="select * from edetection.ed_vehicle_transaction_history where status is null and transaction_date >?1  and transaction_date < ?2 limit 200",nativeQuery = true)
 	List<VehicleTransactionHistory> getVehicleTransactionHistoryListLimitBy1000(Date transactionDate,Date toDt);
 
 	@Query(value="SELECT vh.id, vh.createdby, vh.createddate, vh.transaction_date, status, uniqueid, vehicle_no, vt_class, ul.toll_name "
